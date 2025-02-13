@@ -12,21 +12,31 @@ security:
         # used to reload user from session & other features (e.g. switch_user)
 
     firewalls:
+        login:
+            pattern: ^/login
+            stateless: true
+            json_login:
+                check_path: /login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        api:
+            pattern: ^/
+            stateless: true
+            jwt: ~
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
             provider: app_user_provider
-            json_login:
-                check_path: login
 
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-#         - { path: ^/admin, roles: ROLE_ADMIN }
-#         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/register, roles: PUBLIC_ACCESS  }
+        - { path: ^/login, roles: PUBLIC_ACCESS  }
+        - { path: ^/*,       roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

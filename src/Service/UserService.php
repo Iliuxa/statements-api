@@ -6,12 +6,10 @@ use AllowDynamicProperties;
 use App\Dto\LoginDto;
 use App\Dto\UserDto;
 use App\Entity\User;
-use App\Entity\UserRole;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AllowDynamicProperties]
@@ -25,7 +23,7 @@ class UserService
     {
     }
 
-    public function save(UserDTO $dto): void
+    public function save(UserDTO $dto, bool $isAdmin): void
     {
         try {
             $user = empty($dto->id) ? new User() : $this->userRepository->find($dto->id);
@@ -35,23 +33,35 @@ class UserService
                 ->setEmail($dto->email)
                 ->setPhone($dto->phone)
                 ->setBirthday(DateTime::createFromFormat('Y-m-d', $dto->birthday))
-                ->setRoles($user->getRoles())
+                ->setRoles($isAdmin ? $dto->roles : $user->getRoles())
                 ->setPassword($this->passwordHasher->hashPassword($user, $dto->password));
+
             $this->em->persist($user);
             $this->em->flush();
-        } catch (Exception) {
+        } catch (Exception $exception) {
             // todo logger
             throw new Exception('Error saving user.');
         }
     }
 
-    public function login(LoginDto $dto)
+    public function delete(User $user): void
     {
-        $user = $this->userRepository->findOneBy(['email' => $dto->email]);
-        if (empty($user) || !$this->passwordHasher->isPasswordValid($user, $dto->password)) {
-            throw new BadRequestHttpException();
+        try {
+            $this->em->remove($user);
+            $this->em->flush();
+        } catch (Exception $exception) {
+            // todo logger
+            throw new Exception('Error saving user.');
         }
+    }
 
-
+    public function getAll(): array
+    {
+        try {
+            return $this->userRepository->findAll();
+        } catch (Exception $exception) {
+            // todo logger
+            throw new Exception('Error saving user.');
+        }
     }
 }
