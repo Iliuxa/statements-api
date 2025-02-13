@@ -31,8 +31,11 @@ class UserDto
         #[Email]
         public string $email,
 
-//        #[NotBlank]
-//        public int    $roleId,
+        /**
+         * @var string[]
+         */
+        #[NotBlank]
+        public array    $roles,
 
         #[NotBlank]
         #[PasswordStrength(minScore: 1)]
