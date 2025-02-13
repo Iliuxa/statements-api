@@ -11,6 +11,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Устанавливаем Symfony CLI (исправленная команда)
 RUN curl -sS https://get.symfony.com/cli/installer | bash && mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
+# RUN php bin/console doctrine:migrations:migrate
+
 WORKDIR /var/www/
 
 CMD ["php-fpm"]
