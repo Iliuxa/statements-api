@@ -34,8 +34,7 @@ class UserDto
         /**
          * @var string[]
          */
-        #[NotBlank]
-        public array    $roles,
+        public array  $roles,
 
         #[NotBlank]
         #[PasswordStrength(minScore: 1)]

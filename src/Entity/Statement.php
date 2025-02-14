@@ -3,29 +3,41 @@
 namespace App\Entity;
 
 use App\Repository\StatementRepository;
-use DateTimeInterface;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 
-#[ORM\Entity(repositoryClass: StatementRepository::class)]
+#[Entity(repositoryClass: StatementRepository::class)]
 class Statement
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[Id]
+    #[GeneratedValue]
+    #[Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[Column(type: Types::STRING, length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $number = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $insertDate = null;
+    #[Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTime $insertDate = null;
 
-    #[ORM\Column(nullable: true)]
+    #[Column(type: Types::INTEGER, nullable: true)]
     private ?int $fileId = null;
+
+    #[Column(type: Types::STRING, length: 2000, nullable: true)]
+    private ?string $description = null;
+
+    #[JoinColumn]
+    #[ManyToOne(targetEntity: User::class)]
+    private User $owner;
 
     public function getId(): ?int
     {
@@ -37,10 +49,9 @@ class Statement
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): Statement
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -49,22 +60,20 @@ class Statement
         return $this->number;
     }
 
-    public function setNumber(?string $number): static
+    public function setNumber(?string $number): Statement
     {
         $this->number = $number;
-
         return $this;
     }
 
-    public function getInsertDate(): ?DateTimeInterface
+    public function getInsertDate(): ?DateTime
     {
         return $this->insertDate;
     }
 
-    public function setInsertDate(DateTimeInterface $insertDate): static
+    public function setInsertDate(?DateTime $insertDate): Statement
     {
         $this->insertDate = $insertDate;
-
         return $this;
     }
 
@@ -73,10 +82,31 @@ class Statement
         return $this->fileId;
     }
 
-    public function setFileId(?int $fileId): static
+    public function setFileId(?int $fileId): Statement
     {
         $this->fileId = $fileId;
+        return $this;
+    }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): Statement
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function getOwner(): User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(User $owner): Statement
+    {
+        $this->owner = $owner;
         return $this;
     }
 }

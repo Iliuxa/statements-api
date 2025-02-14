@@ -3,48 +3,68 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Thesaurus\Role;
+use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[Entity(repositoryClass: UserRepository::class)]
+#[Table(name: '`user`')]
+#[UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[Id]
+    #[GeneratedValue]
+    #[Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[Column(type: Types::STRING, length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 180)]
+    #[Column(type: Types::STRING, length: 180)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 15, unique: true)]
+    #[Column(type: Types::STRING, length: 15, unique: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $birthday = null;
 
-    #[ORM\Column(length: 255)]
+    #[Column(type: Types::STRING, length: 255)]
     private ?string $address = null;
 
+    #[Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTime $insertDate = null;
 
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
+    #[Column(type: Types::JSON)]
     private array $roles = [];
 
-    #[ORM\Column]
+    #[Column(type: Types::STRING)]
     #[Ignore]
     private ?string $password = null;
+
+    #[OneToMany(targetEntity: Statement::class, mappedBy: 'owner')]
+    private Collection $statements;
+
+    public function __construct()
+    {
+        $this->statements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -107,6 +127,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getInsertDate(): ?DateTime
+    {
+        return $this->insertDate;
+    }
+
+    public function setInsertDate(?DateTime $insertDate): User
+    {
+        $this->insertDate = $insertDate;
+        return $this;
+    }
+
+    public function getStatements(): Collection
+    {
+        return $this->statements;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -114,19 +150,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
+     * @return list<string>
      * @see UserInterface
      *
-     * @return list<string>
      */
     public function getRoles(): array
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = Role::User->value;
 
         return array_unique($roles);
     }
