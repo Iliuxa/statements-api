@@ -2,23 +2,22 @@
 
 namespace App\Service;
 
-use AllowDynamicProperties;
-use App\Dto\LoginDto;
 use App\Dto\UserDto;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[AllowDynamicProperties]
 class UserService
 {
     public function __construct(
         private readonly EntityManagerInterface      $em,
         private readonly UserRepository              $userRepository,
-        private readonly UserPasswordHasherInterface $passwordHasher
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly LoggerInterface             $logger,
     )
     {
     }
@@ -34,24 +33,28 @@ class UserService
                 ->setPhone($dto->phone)
                 ->setBirthday(DateTime::createFromFormat('Y-m-d', $dto->birthday))
                 ->setRoles($isAdmin ? $dto->roles : $user->getRoles())
-                ->setPassword($this->passwordHasher->hashPassword($user, $dto->password));
+                ->setPassword($this->passwordHasher->hashPassword($user, $dto->password))
+                ->setInsertDate(new DateTime());
 
             $this->em->persist($user);
             $this->em->flush();
         } catch (Exception $exception) {
-            // todo logger
+            $this->logger->error($exception->getMessage());
             throw new Exception('Error saving user.');
         }
     }
 
     public function delete(User $user): void
     {
+        if (!$user->getStatements()->isEmpty()) {
+            throw new Exception('Cannot be deleted. The user has statements.');
+        }
         try {
             $this->em->remove($user);
             $this->em->flush();
         } catch (Exception $exception) {
-            // todo logger
-            throw new Exception('Error saving user.');
+            $this->logger->error($exception->getMessage());
+            throw new Exception('Error deleting user.');
         }
     }
 
@@ -60,8 +63,8 @@ class UserService
         try {
             return $this->userRepository->findAll();
         } catch (Exception $exception) {
-            // todo logger
-            throw new Exception('Error saving user.');
+            $this->logger->error($exception->getMessage());
+            throw new Exception('Error getting users.');
         }
     }
 }
