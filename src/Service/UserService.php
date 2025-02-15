@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use LogicException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -25,7 +26,7 @@ class UserService
     public function save(UserDTO $dto, bool $isAdmin): void
     {
         try {
-            $user = empty($dto->id) ? new User() : $this->userRepository->find($dto->id);
+            $user = $dto->id === null ? new User() : $this->userRepository->find($dto->id);
             $user
                 ->setName($dto->name)
                 ->setAddress($dto->address)
@@ -47,7 +48,7 @@ class UserService
     public function delete(User $user): void
     {
         if (!$user->getStatements()->isEmpty()) {
-            throw new Exception('Cannot be deleted. The user has statements.');
+            throw new LogicException('Cannot be deleted. The user has statements.');
         }
         try {
             $this->em->remove($user);
