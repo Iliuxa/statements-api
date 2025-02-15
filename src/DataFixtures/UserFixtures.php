@@ -32,6 +32,11 @@ class UserFixtures extends Fixture
         $manager->flush();
     }
 
+    /**
+     * @param string[] $roles
+     * @param int $i
+     * @return User
+     */
     private function createUser(array $roles, int $i): User
     {
         $user = new User();

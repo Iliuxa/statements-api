@@ -1,0 +1,13 @@
+parameters:
+    level: 6
+    paths:
+        - src/
+        - tests/Application
+        - tests/Integration
+    ignoreErrors:
+    	- '#Property [a-zA-Z0-9\\_]+::\$id \(int\|null\) is never assigned int so it can be removed from the property type.#'
+    	- '#Property [a-zA-Z0-9\\_]+::\$[a-zA-Z]+ with generic interface [a-zA-Z0-9\\_]+ does not specify its types: TKey, T#'
+    	- '#Method [a-zA-Z0-9\\_]+::[a-zA-Z]+\(\) return type has no value type specified in iterable type array.#'
+    	- '#Method [a-zA-Z0-9\\_]+::[a-zA-Z]+\(\) return type with generic interface [a-zA-Z0-9\\_]+ does not specify its types: TKey, T#'
+    	- '#Class [a-zA-Z0-9\\_]+ implements generic interface [a-zA-Z0-9\\_]+ but does not specify its types: TUser#'
+    	- '#Call to an undefined method [a-zA-Z0-9\\_]+UserInterface::getId\(\)#'

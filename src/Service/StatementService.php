@@ -24,7 +24,7 @@ class StatementService
     public function save(StatementDto $statementDto): void
     {
         try {
-            $statement = empty($statementDto->id) ? new Statement() : $this->statementRepository->find($statementDto->id);
+            $statement = $statementDto->id === null ? new Statement() : $this->statementRepository->find($statementDto->id);
             $statement
                 ->setName($statementDto->name)
                 ->setNumber($statementDto->number)
@@ -61,7 +61,7 @@ class StatementService
         }
     }
 
-    public function getByUser(User $user)
+    public function getByUser(User $user): array
     {
         try {
             return $this->statementRepository->findBy(['owner' => $user]);

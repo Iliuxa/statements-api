@@ -54,10 +54,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Column(type: Types::JSON)]
     private array $roles = [];
 
-    #[Column(type: Types::STRING)]
     #[Ignore]
+    #[Column(type: Types::STRING)]
     private ?string $password = null;
 
+    #[Ignore]
     #[OneToMany(targetEntity: Statement::class, mappedBy: 'owner')]
     private Collection $statements;
 
