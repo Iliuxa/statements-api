@@ -32,7 +32,7 @@ class StatementController extends AbstractController
             throw new AccessDeniedHttpException();
         }
         $this->service->save($statementDto);
-        return new Response('', Response::HTTP_CREATED);
+        return new Response();
     }
 
     #[Route('/statement/{id}', name: 'delete_statement', methods: ['DELETE'], format: 'JSON')]

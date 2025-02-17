@@ -6,6 +6,7 @@ use App\Dto\StatementDto;
 use App\Dto\UserDto;
 use App\Entity\Statement;
 use App\Entity\User;
+use App\Exception\ApiException;
 use App\Service\StatementService;
 use App\Service\UserService;
 use App\Thesaurus\Role;
@@ -43,6 +44,16 @@ class UserServiceTest extends KernelTestCase
         $this->userService->save($dto, false);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $dto->email]);
         self::assertEmpty(array_diff([Role::User->value], $user->getRoles()));
+
+        /** Регистрация (существующего пользователя) */
+        $dto = $this->getDefaultUserDto();
+        $this->expectException(ApiException::class);
+        $this->userService->save($dto, false);
+
+        /** Изменение (на телефон и почту которые существуют) */
+        $dto->id = $user->getId();
+        $this->expectException(ApiException::class);
+        $this->userService->save($dto, false);
     }
 
     public function testDeleteUser(): void
@@ -63,7 +74,7 @@ class UserServiceTest extends KernelTestCase
         $this->statementService->save(new StatementDto(null, 'test', 'test', 'test', $user->getId()));
         $this->entityManager->refresh($user);
 
-        $this->expectException(LogicException::class);
+        $this->expectException(ApiException::class);
         $this->userService->delete($user);
     }
 

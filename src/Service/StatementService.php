@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dto\StatementDto;
 use App\Entity\Statement;
 use App\Entity\User;
+use App\Exception\ApiException;
 use App\Repository\StatementRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,7 +37,7 @@ class StatementService
             $this->em->flush();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error saving statement.');
+            throw new ApiException('Error saving statement.');
         }
     }
 
@@ -47,7 +48,7 @@ class StatementService
             $this->em->flush();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error deleting statement.');
+            throw new ApiException('Error deleting statement.');
         }
     }
 
@@ -57,7 +58,7 @@ class StatementService
             return $this->statementRepository->findAll();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error getting statements.');
+            throw new ApiException('Error getting statements.');
         }
     }
 
@@ -67,7 +68,7 @@ class StatementService
             return $this->statementRepository->findBy(['owner' => $user]);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error getting statement.');
+            throw new ApiException('Error getting statement.');
         }
     }
 }
