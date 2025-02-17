@@ -11,7 +11,23 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: "Statement",
+    properties: [
+        new OA\Property(property: "id", type: "integer", example: 1),
+        new OA\Property(property: "name", type: "string", example: "Заявление на отпуск"),
+        new OA\Property(property: "number", type: "string", example: "12345-ABC", nullable: true),
+        new OA\Property(property: "insertDate", type: "string", format: "date-time", example: "2024-02-18T12:00:00Z"),
+        new OA\Property(property: "fileId", type: "integer", example: 42, nullable: true),
+        new OA\Property(property: "description", type: "string", maxLength: 2000, example: "Заявление на отпуск на 14 дней", nullable: true),
+        new OA\Property(
+            property: "owner",
+            ref: "#/components/schemas/User"
+        )
+    ]
+)]
 #[Entity(repositoryClass: StatementRepository::class)]
 class Statement
 {

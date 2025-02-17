@@ -19,7 +19,26 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Ignore;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: "User",
+    properties: [
+        new OA\Property(property: "id", type: "integer", example: 1),
+        new OA\Property(property: "name", type: "string", example: "Иван Иванов"),
+        new OA\Property(property: "email", type: "string", format: "email", example: "ivan@example.com"),
+        new OA\Property(property: "phone", type: "string", maxLength: 15, example: "89991234567"),
+        new OA\Property(property: "birthday", type: "string", format: "date-time", example: "1990-01-01T00:00:00Z"),
+        new OA\Property(property: "address", type: "string", example: "г. Москва, ул. Пушкина, д. 10"),
+        new OA\Property(property: "insertDate", type: "string", format: "date-time", example: "2024-02-18T12:00:00Z"),
+        new OA\Property(
+            property: "roles",
+            type: "array",
+            items: new OA\Items(type: "string"),
+            example: ["ROLE_USER", "ROLE_ADMIN"]
+        )
+    ]
+)]
 #[Entity(repositoryClass: UserRepository::class)]
 #[Table(name: '`user`')]
 #[UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]

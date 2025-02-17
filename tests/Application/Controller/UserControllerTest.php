@@ -61,7 +61,7 @@ class UserControllerTest extends WebTestCase
         $tokenAdmin = $this->getJWT($adminDto);
 
         /** Изменение пользователя */
-        $user = $this->entityManager->getRepository(User::class)->findOneByEmail($userDto->email);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $userDto->email]);
         $userDto->id = $user->getId();
         $userDto->name = 'test2';
         $jsonData = json_encode($userDto);
@@ -95,7 +95,7 @@ class UserControllerTest extends WebTestCase
 
         $userDto = $this->getDefaultUserDto();
         $this->userService->save($userDto, false);
-        $user = $this->entityManager->getRepository(User::class)->findOneByEmail($userDto->email);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $userDto->email]);
         $tokenUser = $this->getJWT($userDto);
 
 
@@ -110,7 +110,7 @@ class UserControllerTest extends WebTestCase
         /** Удаление пользователья администратором */
         $this->client->request('DELETE', '/user/' . $user->getId(), [], [], ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer $tokenAdmin"]);
         $this->assertResponseIsSuccessful();
-        $user = $this->entityManager->getRepository(User::class)->findOneByEmail($userDto->email);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $userDto->email]);
         $this->assertNull($user);
     }
 
@@ -119,12 +119,12 @@ class UserControllerTest extends WebTestCase
         $adminDto = $this->getDefaultUserDto();
         $adminDto->roles[] = Role::Admin->value;
         $this->userService->save($adminDto, true);
-        $admin = $this->entityManager->getRepository(User::class)->findOneByEmail($adminDto->email);
+        $admin = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $adminDto->email]);
         $tokenAdmin = $this->getJWT($adminDto);
 
         $userDto = $this->getDefaultUserDto();
         $this->userService->save($userDto, false);
-        $user = $this->entityManager->getRepository(User::class)->findOneByEmail($userDto->email);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $userDto->email]);
         $tokenUser = $this->getJWT($userDto);
 
         /** Получение информации о пользователе самим пользователем */

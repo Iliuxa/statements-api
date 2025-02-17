@@ -1,0 +1,378 @@
+openapi: 3.0.0
+info:
+  title: 'Statements API'
+  description: 'API documentation for statements system API'
+  version: '1.0'
+paths:
+  /statement:
+    get:
+      tags:
+        - statement
+      summary: 'Получение заявлений доступных пользователю'
+      operationId: c5e9d7f6829ae2779fd26497a902c058
+      responses:
+        '200':
+          description: 'Statements information'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Statement'
+        '403':
+          description: 'Access denied'
+        '404':
+          description: 'Not found'
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+    put:
+      tags:
+        - statement
+      summary: 'Изменение заявления'
+      operationId: 06cca891e5bc28dc3540199bd7b3c37f
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatementDto'
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access denied'
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+    post:
+      tags:
+        - statement
+      summary: 'Создание нового заявления'
+      operationId: 1870c805790df764c95d0a7f669c4444
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatementDto'
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+  '/statement/{id}':
+    get:
+      tags:
+        - statement
+      summary: 'Получение заявления'
+      operationId: a7be0b783a39c5bf7979c20c6449a85d
+      responses:
+        '200':
+          description: 'Statement information'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statement'
+        '403':
+          description: 'Access denied'
+        '404':
+          description: 'Not found'
+      security:
+        -
+          BearerAuth: []
+    delete:
+      tags:
+        - statement
+      summary: 'Удаление заявления'
+      operationId: 827b19dee71bec1ce916e10fd268c566
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access denied'
+        '404':
+          description: 'Not found'
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+  /login_check:
+    post:
+      tags:
+        - login
+      summary: 'Аутентификация и получение JWT-токена'
+      operationId: ea79ae827de4e7dea7b7f2e7a9516c41
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                  example: admin@example.com
+                password:
+                  type: string
+                  format: password
+                  example: admin123
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  token: { type: string, example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... }
+                type: object
+        '401':
+          description: 'Authentication error'
+  /register:
+    post:
+      tags:
+        - user
+      summary: 'Создание нового пользователя'
+      operationId: 0d19af779a1c55db716bfcba920bac3b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '201':
+          description: Success
+        '500':
+          description: 'Runtime exception'
+  /user:
+    get:
+      tags:
+        - user
+      summary: 'Получение информации о пользователях'
+      operationId: 75caa6ce6a6915ab084344e40d726dfc
+      responses:
+        '200':
+          description: 'Users information'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          description: 'Access denied'
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+    put:
+      tags:
+        - user
+      summary: 'Изменение пользователя'
+      operationId: 106b20ebdd07e991d89d642a8efb26b2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access denied'
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+  '/user/{id}':
+    get:
+      tags:
+        - user
+      summary: 'Получение информации о пользователе по id'
+      operationId: ee897a9dccde6dd9c9ba8db47996f105
+      responses:
+        '200':
+          description: 'User information'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: 'Access denied'
+        '404':
+          description: 'Not found'
+      security:
+        -
+          BearerAuth: []
+    delete:
+      tags:
+        - user
+      summary: 'Удаление пользователя по id'
+      operationId: 83b390647ca3454d79cc0fa150c8e233
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access denied'
+        '404':
+          description: 'Not found'
+        '500':
+          description: 'Runtime exception'
+      security:
+        -
+          BearerAuth: []
+components:
+  schemas:
+    StatementDto:
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+          nullable: true
+        name:
+          type: string
+          example: 'Заявление на отпуск'
+        number:
+          type: string
+          example: 12345-ABC
+          nullable: true
+        description:
+          type: string
+          example: 'Заявление на отпуск на 180 дней'
+          nullable: true
+        ownerId:
+          type: integer
+          example: 42
+          nullable: true
+      type: object
+    UserDto:
+      required:
+        - name
+        - birthday
+        - address
+        - phone
+        - email
+        - roles
+        - password
+      properties:
+        id:
+          type: integer
+          example: 1
+          nullable: true
+        name:
+          type: string
+          example: 'Иван Иванов'
+        birthday:
+          type: string
+          format: date
+          example: '1990-01-01'
+        address:
+          type: string
+          example: 'г. Москва, ул. Пушкина, д. 10'
+        phone:
+          type: string
+          maxLength: 15
+          example: '89991234567'
+        email:
+          type: string
+          format: email
+          example: ivan@example.com
+        roles:
+          type: array
+          items:
+            type: string
+          example:
+            - ROLE_USER
+            - ROLE_ADMIN
+        password:
+          type: string
+          format: password
+          example: SecurePass123!
+      type: object
+    Statement:
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Заявление на отпуск'
+        number:
+          type: string
+          example: 12345-ABC
+          nullable: true
+        insertDate:
+          type: string
+          format: date-time
+          example: '2024-02-18T12:00:00Z'
+        fileId:
+          type: integer
+          example: 42
+          nullable: true
+        description:
+          type: string
+          maxLength: 2000
+          example: 'Заявление на отпуск на 14 дней'
+          nullable: true
+        owner:
+          $ref: '#/components/schemas/User'
+      type: object
+    User:
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Иван Иванов'
+        email:
+          type: string
+          format: email
+          example: ivan@example.com
+        phone:
+          type: string
+          maxLength: 15
+          example: '89991234567'
+        birthday:
+          type: string
+          format: date-time
+          example: '1990-01-01T00:00:00Z'
+        address:
+          type: string
+          example: 'г. Москва, ул. Пушкина, д. 10'
+        insertDate:
+          type: string
+          format: date-time
+          example: '2024-02-18T12:00:00Z'
+        roles:
+          type: array
+          items:
+            type: string
+          example:
+            - ROLE_USER
+            - ROLE_ADMIN
+      type: object
+tags:
+  -
+    name: statement
+    description: statement
+  -
+    name: login
+    description: login
+  -
+    name: user
+    description: user
