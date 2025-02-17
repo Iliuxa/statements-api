@@ -58,7 +58,7 @@ class StatementController extends AbstractController
     #[Route('/statement', name: 'save_statement', methods: ['POST', 'PUT'], format: 'JSON')]
     public function save(#[MapRequestPayload] StatementDto $statementDto): Response
     {
-        if (!$this->isGranted(Role::Admin->value) && $statementDto->ownerId !== $this->getUser()->getId()) {
+        if (!$this->isGranted(Role::Admin->value) && $statementDto->id !== null && $statementDto->ownerId !== $this->getUser()->getId()) {
             throw new AccessDeniedHttpException();
         }
         $this->service->save($statementDto);

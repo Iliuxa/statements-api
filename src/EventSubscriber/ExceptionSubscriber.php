@@ -19,6 +19,12 @@ class ExceptionSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * Отправка сообщения об ошибке пользователю
+     * @param ExceptionEvent $event
+     * @return void
+     * @throws \Throwable
+     */
     public function processException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();

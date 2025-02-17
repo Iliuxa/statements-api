@@ -9,6 +9,7 @@ use App\Exception\ApiException;
 use App\Repository\StatementRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
 
@@ -22,6 +23,12 @@ class StatementService
     {
     }
 
+    /**
+     * Создание и изменение заявления
+     * @param StatementDto $statementDto
+     * @return void
+     * @throws ORMException
+     */
     public function save(StatementDto $statementDto): void
     {
         try {
@@ -41,6 +48,11 @@ class StatementService
         }
     }
 
+    /**
+     * Удаление заявления
+     * @param Statement $statement
+     * @return void
+     */
     public function delete(Statement $statement): void
     {
         try {
@@ -52,6 +64,10 @@ class StatementService
         }
     }
 
+    /**
+     * Получение всех заявлений
+     * @return Statement[]
+     */
     public function getAll(): array
     {
         try {
@@ -62,10 +78,15 @@ class StatementService
         }
     }
 
+    /**
+     * Получение всех заявлений доступных пользователю
+     * @param User $user
+     * @return Statement[]
+     */
     public function getByUser(User $user): array
     {
         try {
-            return $this->statementRepository->findBy(['owner' => $user]);
+            return $user->getStatements()->toArray();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
             throw new ApiException('Error getting statement.');
