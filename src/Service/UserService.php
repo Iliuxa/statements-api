@@ -23,6 +23,12 @@ class UserService
     {
     }
 
+    /**
+     * Создание и изменение пользователя
+     * @param UserDto $dto
+     * @param bool $isAdmin
+     * @return void
+     */
     public function save(UserDTO $dto, bool $isAdmin): void
     {
         $users = $this->userRepository->getAnotherUsersByEmailOrPhone($dto->id, $dto->email, $dto->phone);
@@ -50,6 +56,11 @@ class UserService
         }
     }
 
+    /**
+     * Удаление пользователя
+     * @param User $user
+     * @return void
+     */
     public function delete(User $user): void
     {
         if (!$user->getStatements()->isEmpty()) {
@@ -64,6 +75,10 @@ class UserService
         }
     }
 
+    /**
+     * Получение всех пользователей
+     * @return User[]
+     */
     public function getAll(): array
     {
         try {

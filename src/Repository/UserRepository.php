@@ -33,6 +33,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Получение пользователей (кроме пользователя с передаваемым id) по почте или телефону
+     * @param int|null $id - id пользователя которого нужно исключить из выборки
+     * @param string $email
+     * @param string $phone
+     * @return User[]
+     */
     public function getAnotherUsersByEmailOrPhone(?int $id, string $email, string $phone): array
     {
         $queryBuilder = $this->createQueryBuilder('user')
