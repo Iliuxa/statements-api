@@ -11,3 +11,5 @@ parameters:
     	- '#Method [a-zA-Z0-9\\_]+::[a-zA-Z]+\(\) return type with generic interface [a-zA-Z0-9\\_]+ does not specify its types: TKey, T#'
     	- '#Class [a-zA-Z0-9\\_]+ implements generic interface [a-zA-Z0-9\\_]+ but does not specify its types: TUser#'
     	- '#Call to an undefined method [a-zA-Z0-9\\_]+UserInterface::getId\(\)#'
+    	- '#Dynamic call to static method PHPUnit\\Framework\\Assert::[a-zA-Z]+\(\)#'
+    	- '#Dynamic call to static method Symfony\\Bundle\\FrameworkBundle\\Test\\WebTestCase::[a-zA-Z]+\(\)#'

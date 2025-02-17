@@ -74,14 +74,14 @@ class StatementControllerTest extends WebTestCase
         /** Удаление заявления */
         $statementDto = $this->getDefaultStatementDto($user->getId());
         $this->statementService->save($statementDto);
-        $statement = $this->entityManager->getrepository(Statement::class)->findOneBy(['owner' => $user]);
+        $statement = $this->entityManager->getRepository(Statement::class)->findOneBy(['owner' => $user]);
         $this->client->request('DELETE', '/statement/' . $statement->getId(), [], [], ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer $tokenUser"]);
         $this->assertResponseIsSuccessful();
 
         /** Удаление чужого зявления не администратором */
         $statementDto = $this->getDefaultStatementDto($admin->getId());
         $this->statementService->save($statementDto);
-        $statement = $this->entityManager->getrepository(Statement::class)->findOneBy(['owner' => $admin]);
+        $statement = $this->entityManager->getRepository(Statement::class)->findOneBy(['owner' => $admin]);
         try {
             $this->client->request('DELETE', '/statement/' . $statement->getId(), [], [], ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer $tokenUser"]);
         } catch (AccessDeniedHttpException) {
@@ -92,7 +92,7 @@ class StatementControllerTest extends WebTestCase
         /** Удаление чужого зявления администратором */
         $statementDto = $this->getDefaultStatementDto($user->getId());
         $this->statementService->save($statementDto);
-        $statement = $this->entityManager->getrepository(Statement::class)->findOneBy(['owner' => $user]);
+        $statement = $this->entityManager->getRepository(Statement::class)->findOneBy(['owner' => $user]);
         $this->client->request('DELETE', '/statement/' . $statement->getId(), [], [], ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer $tokenAdmin"]);
         $this->assertResponseIsSuccessful();
     }
@@ -105,7 +105,7 @@ class StatementControllerTest extends WebTestCase
         /** Получение заявления */
         $statementDto = $this->getDefaultStatementDto($user->getId());
         $this->statementService->save($statementDto);
-        $statement = $this->entityManager->getrepository(Statement::class)->findOneBy(['owner' => $user]);
+        $statement = $this->entityManager->getRepository(Statement::class)->findOneBy(['owner' => $user]);
         $this->client->request('GET', '/statement/' . $statement->getId(), [], [], ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer $tokenUser"]);
         $this->assertResponseIsSuccessful();
         $responseBody = json_decode($this->client->getResponse()->getContent(), true);
@@ -120,7 +120,7 @@ class StatementControllerTest extends WebTestCase
         /** Получение чужого зявлния не администратором */
         $statementDto = $this->getDefaultStatementDto($admin->getId());
         $this->statementService->save($statementDto);
-        $statement = $this->entityManager->getrepository(Statement::class)->findOneBy(['owner' => $admin]);
+        $statement = $this->entityManager->getRepository(Statement::class)->findOneBy(['owner' => $admin]);
         try {
             $this->client->request('DELETE', '/statement/' . $statement->getId(), [], [], ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer $tokenUser"]);
         } catch (AccessDeniedHttpException) {
@@ -181,7 +181,7 @@ class StatementControllerTest extends WebTestCase
         );
     }
 
-    private function createUser($isAdmin): array
+    private function createUser(bool $isAdmin): array
     {
         static $id = 0;
         $id++;
@@ -198,7 +198,7 @@ class StatementControllerTest extends WebTestCase
             $password
         ), $isAdmin);
 
-        $user = $this->entityManager->getRepository(User::class)->findOneByEmail($email);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
         $jsonData = json_encode([
             "username" => $email,
