@@ -4,11 +4,11 @@ namespace App\Service;
 
 use App\Dto\UserDto;
 use App\Entity\User;
+use App\Exception\ApiException;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use LogicException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -25,6 +25,11 @@ class UserService
 
     public function save(UserDTO $dto, bool $isAdmin): void
     {
+        $users = $this->userRepository->getAnotherUsersByEmailOrPhone($dto->id, $dto->email, $dto->phone);
+        if (!empty($users)) {
+            throw new ApiException('User with such mail or phone already exists');
+        }
+
         try {
             $user = $dto->id === null ? new User() : $this->userRepository->find($dto->id);
             $user
@@ -41,21 +46,21 @@ class UserService
             $this->em->flush();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error saving user.');
+            throw new ApiException('Error saving user.');
         }
     }
 
     public function delete(User $user): void
     {
         if (!$user->getStatements()->isEmpty()) {
-            throw new LogicException('Cannot be deleted. The user has statements.');
+            throw new ApiException('Cannot be deleted. The user has statements.');
         }
         try {
             $this->em->remove($user);
             $this->em->flush();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error deleting user.');
+            throw new ApiException('Error deleting user.');
         }
     }
 
@@ -65,7 +70,7 @@ class UserService
             return $this->userRepository->findAll();
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-            throw new Exception('Error getting users.');
+            throw new ApiException('Error getting users.');
         }
     }
 }

@@ -33,7 +33,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Column(type: Types::STRING, length: 255)]
     private ?string $name = null;
 
-    #[Column(type: Types::STRING, length: 180)]
+    #[Column(type: Types::STRING, length: 180, unique: true)]
     private ?string $email = null;
 
     #[Column(type: Types::STRING, length: 15, unique: true)]

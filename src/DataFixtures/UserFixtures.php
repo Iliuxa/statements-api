@@ -19,13 +19,13 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i < 21; $i++) {
-            $user = $this->createUser([Role::User->value], $i);
+        for ($i = 0; $i < 20; $i++) {
+            $user = $this->createUser([Role::User->value]);
             $manager->persist($user);
         }
 
-        for ($i = 21; $i < 24; $i++) {
-            $user = $this->createUser([Role::User->value, Role::Admin->value], $i);
+        for ($i = 0; $i < 3; $i++) {
+            $user = $this->createUser([Role::User->value, Role::Admin->value]);
             $manager->persist($user);
         }
 
@@ -34,20 +34,21 @@ class UserFixtures extends Fixture
 
     /**
      * @param string[] $roles
-     * @param int $i
      * @return User
      */
-    private function createUser(array $roles, int $i): User
+    private function createUser(array $roles): User
     {
+        static $id = 0;
+        $id++;
         $user = new User();
         return $user
-            ->setName(sprintf('Пользователь %d', $i))
-            ->setAddress(sprintf('Адрес %d', $i))
-            ->setEmail(sprintf('email%d@yandex.ru', $i))
-            ->setPhone(sprintf('8920777777%d', $i))
-            ->setBirthday(DateTime::createFromFormat('Y-m-d', sprintf('2003-08-%d', $i)))
+            ->setName(sprintf('Пользователь %d', $id))
+            ->setAddress(sprintf('Адрес %d', $id))
+            ->setEmail(sprintf('email%d@yandex.ru', $id))
+            ->setPhone(sprintf('8920777777%d', $id))
+            ->setBirthday(DateTime::createFromFormat('Y-m-d', sprintf('2003-08-%d', $id)))
             ->setRoles($roles)
-            ->setPassword($this->hasher->hashPassword($user, sprintf('P@ssw0rd1234%d', $i)))
+            ->setPassword($this->hasher->hashPassword($user, sprintf('P@ssw0rd1234%d', $id)))
             ->setInsertDate(new DateTime());
     }
 }
