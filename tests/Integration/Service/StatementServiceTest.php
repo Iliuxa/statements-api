@@ -82,6 +82,7 @@ class StatementServiceTest extends KernelTestCase
         $this->statementService->save($statementDto);
 
         /** Вывод всех заявлений конкретного пользователя */
+        $this->entityManager->refresh($user);
         $statements = $this->statementService->getByUser($user);
         self::assertCount(2, $statements);
     }
