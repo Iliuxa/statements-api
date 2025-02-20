@@ -112,7 +112,8 @@ class StatementServiceTest extends KernelTestCase
             'testName',
             '2025-AA',
             'test test test test test',
-            $ownerId
+            $ownerId,
+            null
         );
     }
 

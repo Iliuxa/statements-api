@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[OA\Schema(
     schema: "Statement",
@@ -22,10 +23,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: "insertDate", type: "string", format: "date-time", example: "2024-02-18T12:00:00Z"),
         new OA\Property(property: "fileId", type: "integer", example: 42, nullable: true),
         new OA\Property(property: "description", type: "string", maxLength: 2000, example: "Заявление на отпуск на 14 дней", nullable: true),
-        new OA\Property(
-            property: "owner",
-            ref: "#/components/schemas/User"
-        )
+        new OA\Property(property: "owner", ref: "#/components/schemas/User")
     ]
 )]
 #[Entity(repositoryClass: StatementRepository::class)]
@@ -45,6 +43,7 @@ class Statement
     #[Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTime $insertDate = null;
 
+    #[Ignore]
     #[Column(type: Types::INTEGER, nullable: true)]
     private ?int $fileId = null;
 

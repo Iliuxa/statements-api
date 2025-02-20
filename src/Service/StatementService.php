@@ -7,6 +7,7 @@ use App\Entity\Statement;
 use App\Entity\User;
 use App\Exception\ApiException;
 use App\Repository\StatementRepository;
+use App\Service\Storage\StorageInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -18,6 +19,7 @@ class StatementService
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly StatementRepository    $statementRepository,
+        private readonly StorageInterface       $storage,
         private readonly LoggerInterface        $logger,
     )
     {
@@ -39,6 +41,9 @@ class StatementService
                 ->setDescription($statementDto->description)
                 ->setInsertDate(new DateTime())
                 ->setOwner($this->em->getReference(User::class, $statementDto->ownerId));
+            if (isset($statementDto->file)) {
+                $statement->setFileId($this->storage->saveBase64($statementDto->file->base64, $statementDto->file->name));
+            }
 
             $this->em->persist($statement);
             $this->em->flush();
@@ -90,6 +95,21 @@ class StatementService
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
             throw new ApiException('Error getting statement.');
+        }
+    }
+
+    /**
+     * Скачивание файла заявления
+     * @param int $fileId
+     * @return void
+     */
+    public function download(int $fileId): void
+    {
+        try {
+            $this->storage->download($fileId);
+        } catch (Exception $exception) {
+            $this->logger->error($exception->getMessage());
+            throw new ApiException('Error getting file.');
         }
     }
 }
