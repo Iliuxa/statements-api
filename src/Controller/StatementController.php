@@ -70,6 +70,15 @@ class StatementController extends AbstractController
         summary: "Удаление заявления",
         security: [["BearerAuth" => []]],
         tags: ['statement'],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Идентификатор заявления",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 123)
+            )
+        ],
         responses: [
             new OA\Response(response: 200, description: "Success"),
             new OA\Response(response: 403, description: 'Access denied'),
@@ -92,6 +101,15 @@ class StatementController extends AbstractController
         summary: "Получение заявления",
         security: [["BearerAuth" => []]],
         tags: ['statement'],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Идентификатор заявления",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 123)
+            )
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -140,5 +158,44 @@ class StatementController extends AbstractController
         }
 
         return $this->json($statements);
+    }
+
+    #[OA\Get(
+        path: "/statement/{id}/file",
+        summary: "Скачать файл, связанный с заявлением",
+        security: [["BearerAuth" => []]],
+        tags: ["statement"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Идентификатор заявления",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 123)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Файл успешно загружен",
+                content: new OA\MediaType(
+                    mediaType: "application/octet-stream",
+                    schema: new OA\Schema(type: "string", format: "binary")
+                )
+            ),
+            new OA\Response(response: 403, description: 'Access denied'),
+            new OA\Response(response: 404, description: 'Not found'),
+            new OA\Response(response: 500, description: 'Runtime exception'),
+        ]
+    )]
+    #[Route('/statement/{id}/file', name: 'download_statement_file', methods: ['GET'])]
+    public function downloadStatementFile(Statement $statement): Response
+    {
+        if (!$this->isGranted(Role::Admin->value) && $statement->getOwner()->getId() !== $this->getUser()->getId()) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $this->service->download($statement->getFileId());
+        return new Response();
     }
 }

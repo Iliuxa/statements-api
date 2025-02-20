@@ -106,6 +106,15 @@ class UserController extends AbstractController
         summary: 'Удаление пользователя по id',
         security: [["BearerAuth" => []]],
         tags: ['user'],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Идентификатор пользователя",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 123)
+            )
+        ],
         responses: [
             new OA\Response(response: 200, description: "Success"),
             new OA\Response(response: 403, description: 'Access denied'),
@@ -126,6 +135,15 @@ class UserController extends AbstractController
         summary: 'Получение информации о пользователе по id',
         security: [["BearerAuth" => []]],
         tags: ['user'],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Идентификатор пользователя",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 123)
+            )
+        ],
         responses: [
             new OA\Response(
                 response: 200,

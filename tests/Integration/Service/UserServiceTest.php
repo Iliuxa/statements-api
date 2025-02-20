@@ -11,7 +11,6 @@ use App\Service\StatementService;
 use App\Service\UserService;
 use App\Thesaurus\Role;
 use Doctrine\ORM\EntityManagerInterface;
-use LogicException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -71,7 +70,7 @@ class UserServiceTest extends KernelTestCase
         /** Удаление с существующими заявлениями */
         $this->userService->save($dto, false);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $dto->email]);
-        $this->statementService->save(new StatementDto(null, 'test', 'test', 'test', $user->getId()));
+        $this->statementService->save(new StatementDto(null, 'test', 'test', 'test', $user->getId(), null));
         $this->entityManager->refresh($user);
 
         $this->expectException(ApiException::class);
